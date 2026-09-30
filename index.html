@@ -411,6 +411,40 @@
         transition: none !important;
       }
     }
+
+    
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 28px;
+}
+
+.filter-button {
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--green);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.filter-button:hover,
+.filter-button.active {
+  background: var(--green);
+  color: var(--paper-light);
+}
+
+.filter-button:focus-visible {
+  outline: 2px solid var(--brown);
+  outline-offset: 3px;
+}
+
+.work-card[hidden] {
+  display: none;
+}
+    
   </style>
 </head>
 
