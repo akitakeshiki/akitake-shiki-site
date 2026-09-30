@@ -620,5 +620,32 @@
     <p>秋茸梓樹｜声と言葉の書庫</p>
     <small>© 秋茸梓樹</small>
   </footer>
+
+  
+<script>
+  const filterButtons = document.querySelectorAll(".filter-button");
+  const workCards = document.querySelectorAll(".shelf .work-card");
+
+  filterButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const selected = button.dataset.filter;
+
+      filterButtons.forEach((item) => {
+        const active = item === button;
+        item.classList.toggle("active", active);
+        item.setAttribute("aria-pressed", String(active));
+      });
+
+      workCards.forEach((card) => {
+        const show =
+          selected === "all" ||
+          card.dataset.category === selected;
+
+        card.hidden = !show;
+      });
+    });
+  });
+</script>
+  
 </body>
 </html>
