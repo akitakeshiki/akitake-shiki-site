@@ -478,6 +478,28 @@
   line-height: 1.8;
 }
     
+.work-card a {
+  display: inline-block;
+  padding: 9px 16px;
+  border: 1px solid var(--green);
+  border-radius: 4px;
+  background: var(--green);
+  color: var(--paper-light);
+  font-size: 12px;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.work-card a:hover {
+  background: transparent;
+  color: var(--green);
+}
+
+.work-card a:focus-visible {
+  outline: 2px solid var(--brown);
+  outline-offset: 3px;
+}
+    
   </style>
 </head>
 
