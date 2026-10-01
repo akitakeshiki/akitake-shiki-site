@@ -194,11 +194,19 @@
       gap: 22px;
     }
 
-    .work-card {
-      min-width: 0;
-      border: 1px solid var(--line);
-      background: #fffdf8;
-    }
+.work-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  background: #fffdf8;
+  padding: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.work-card:hover {
+  border-color: var(--brown);
+}
 
     .book-cover {
       min-height: 165px;
