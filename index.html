@@ -500,6 +500,37 @@
   outline-offset: 3px;
 }
     
+.profile-box {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 40px;
+  align-items: center;
+}
+
+.profile-portrait {
+  grid-column: 2;
+  grid-row: 1;
+  display: block;
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  justify-self: center;
+  object-fit: contain;
+}
+
+@media (max-width: 640px) {
+  .profile-box {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .profile-portrait {
+    grid-column: 1;
+    grid-row: auto;
+    width: min(70%, 220px);
+  }
+}
+    
   </style>
 </head>
 
