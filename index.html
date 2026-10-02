@@ -761,5 +761,32 @@
   });
 </script>
   
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script>
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+
+  async function loadPublishedWorks() {
+    const { data, error } = await supabaseClient
+      .from("works")
+      .select("*")
+      .eq("is_published", true)
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("作品の読み込みに失敗しました:", error);
+      return;
+    }
+
+    console.log("Supabaseから取得した公開作品:", data);
+  }
+
+  loadPublishedWorks();
+</script>
+  
 </body>
 </html>
