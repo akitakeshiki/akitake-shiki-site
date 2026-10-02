@@ -807,8 +807,14 @@
     }
 
     const title = document.createElement("h3");
-    title.textContent = work.title;
-    article.appendChild(title);
+title.textContent = work.title;
+
+const detailLink = document.createElement("a");
+detailLink.href = `work.html?id=${encodeURIComponent(work.id)}`;
+detailLink.className = "work-title-link";
+detailLink.appendChild(title);
+
+article.appendChild(detailLink);
 
     const description = document.createElement("p");
     description.textContent = work.description || work.category;
