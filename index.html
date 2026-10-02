@@ -738,7 +738,6 @@
   
 <script>
   const filterButtons = document.querySelectorAll(".filter-button");
-  const workCards = document.querySelectorAll(".shelf .work-card");
 
   filterButtons.forEach((button) => {
     button.addEventListener("click", () => {
@@ -749,6 +748,11 @@
         item.classList.toggle("active", active);
         item.setAttribute("aria-pressed", String(active));
       });
+
+      // ボタンを押した時点で、本棚の作品カードを取得する
+      const workCards = document.querySelectorAll(
+        "#works-shelf .work-card"
+      );
 
       workCards.forEach((card) => {
         const show =
