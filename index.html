@@ -770,22 +770,60 @@
   );
 
   async function loadPublishedWorks() {
-    const { data, error } = await supabaseClient
-      .from("works")
-      .select("*")
-      .eq("is_published", true)
-      .order("sort_order", { ascending: true })
-      .order("created_at", { ascending: false });
+  const { data, error } = await supabaseClient
+    .from("works")
+    .select("*")
+    .eq("is_published", true)
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: false });
 
-    if (error) {
-      console.error("作品の読み込みに失敗しました:", error);
-      return;
-    }
-
-    console.log("Supabaseから取得した公開作品:", data);
+  if (error) {
+    console.error("作品の読み込みに失敗しました:", error);
+    return;
   }
 
-  loadPublishedWorks();
+  const shelf = document.getElementById("works-shelf");
+  if (!shelf) return;
+
+  // 既存のカードを消して、Supabaseの作品データで描画する
+  shelf.replaceChildren();
+
+  data.forEach((work) => {
+    const article = document.createElement("article");
+    article.className = "work-card";
+    article.dataset.category = work.category;
+
+    if (work.thumbnail_url) {
+      const img = document.createElement("img");
+      img.className = "work-thumbnail";
+      img.src = work.thumbnail_url;
+      img.alt = `${work.title}のサムネイル`;
+      img.loading = "lazy";
+      article.appendChild(img);
+    }
+
+    const title = document.createElement("h3");
+    title.textContent = work.title;
+    article.appendChild(title);
+
+    const description = document.createElement("p");
+    description.textContent = work.description || work.category;
+    article.appendChild(description);
+
+    const link = document.createElement("a");
+    link.href = work.youtube_url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = "作品を聴く";
+    article.appendChild(link);
+
+    shelf.appendChild(article);
+  });
+
+  console.log(`Supabaseから${data.length}作品を表示しました`);
+}
+
+loadPublishedWorks();
 </script>
   
 </body>
