@@ -797,14 +797,24 @@
     article.className = "work-card";
     article.dataset.category = work.category;
 
-    if (work.thumbnail_url) {
-      const img = document.createElement("img");
-      img.className = "work-thumbnail";
-      img.src = work.thumbnail_url;
-      img.alt = `${work.title}のサムネイル`;
-      img.loading = "lazy";
-      article.appendChild(img);
-    }
+
+if (work.thumbnail_url) {
+  const img = document.createElement("img");
+  img.className = "work-thumbnail";
+  img.src = work.thumbnail_url;
+  img.alt = `${work.title}の詳細を見る`;
+  img.loading = "lazy";
+
+  const thumbnailLink = document.createElement("a");
+  thumbnailLink.href = `work.html?id=${encodeURIComponent(work.id)}`;
+  thumbnailLink.setAttribute(
+    "aria-label",
+    `${work.title}の作品詳細ページを開く`
+  );
+
+  thumbnailLink.appendChild(img);
+  article.appendChild(thumbnailLink);
+}
 
     const title = document.createElement("h3");
 title.textContent = work.title;
