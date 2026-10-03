@@ -394,15 +394,57 @@ async function loadWorks() {
     status.textContent = work.is_published ? "公開中" : "非公開";
     item.appendChild(status);
 
-    const editButton = document.createElement("button");
-    editButton.type = "button";
-    editButton.textContent = "編集する";
-    editButton.addEventListener("click", () => {
-      showEditForm(work);
-    });
-    item.appendChild(editButton);
+    
+const editButton = document.createElement("button");
+editButton.type = "button";
+editButton.textContent = "編集する";
+editButton.addEventListener("click", () => {
+  showEditForm(work);
+});
+item.appendChild(editButton);
 
-    worksList.appendChild(item);
+const deleteButton = document.createElement("button");
+deleteButton.type = "button";
+deleteButton.textContent = "削除する";
+deleteButton.className = "secondary";
+deleteButton.style.marginLeft = "8px";
+
+deleteButton.addEventListener("click", async () => {
+  const confirmed = window.confirm(
+    `「${work.title}」を削除しますか？\n\nこの操作は取り消せません。`
+  );
+
+  if (!confirmed) return;
+
+  deleteButton.disabled = true;
+  showStatus("作品を削除しています……");
+
+  try {
+    const { data: sessionData, error: sessionError } =
+      await supabaseClient.auth.getSession();
+
+    if (sessionError || !sessionData.session) {
+      throw new Error("ログインし直してください。");
+    }
+
+    const { error } = await supabaseClient
+      .from("works")
+      .delete()
+      .eq("id", work.id);
+
+    if (error) throw error;
+
+    showStatus(`「${work.title}」を削除しました。`);
+    await loadWorks();
+  } catch (error) {
+    showStatus("削除できませんでした：" + error.message);
+    deleteButton.disabled = false;
+  }
+});
+
+item.appendChild(deleteButton);
+
+worksList.appendChild(item);
   });
 }
     
