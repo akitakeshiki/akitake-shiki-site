@@ -444,6 +444,55 @@ deleteButton.addEventListener("click", async () => {
 
 item.appendChild(deleteButton);
 
+// 公開・非公開を切り替えるボタン
+const publishButton = document.createElement("button");
+publishButton.type = "button";
+publishButton.textContent = work.is_published
+  ? "非公開にする"
+  : "公開する";
+publishButton.className = "secondary";
+publishButton.style.marginLeft = "8px";
+
+publishButton.addEventListener("click", async () => {
+  publishButton.disabled = true;
+  showStatus(
+    work.is_published
+      ? `「${work.title}」を非公開にしています……`
+      : `「${work.title}」を公開しています……`
+  );
+
+  try {
+    const { data: sessionData, error: sessionError } =
+      await supabaseClient.auth.getSession();
+
+    if (sessionError || !sessionData.session) {
+      throw new Error("ログインし直してください。");
+    }
+
+    const { error } = await supabaseClient
+      .from("works")
+      .update({
+        is_published: !work.is_published
+      })
+      .eq("id", work.id);
+
+    if (error) throw error;
+
+    showStatus(
+      work.is_published
+        ? `「${work.title}」を非公開にしました。`
+        : `「${work.title}」を公開しました。`
+    );
+
+    await loadWorks();
+  } catch (error) {
+    showStatus("公開状態を変更できませんでした：" + error.message);
+    publishButton.disabled = false;
+  }
+});
+
+item.appendChild(publishButton);
+
 worksList.appendChild(item);
   });
 }
