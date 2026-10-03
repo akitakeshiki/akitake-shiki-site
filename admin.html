@@ -330,6 +330,75 @@
       showUser(data.session?.user || null);
     }
 
+async function loadWorks() {
+  const worksPanel = document.getElementById("works-panel");
+  const worksList = document.getElementById("works-list");
+
+  worksPanel.hidden = false;
+  worksList.replaceChildren();
+
+  const loading = document.createElement("p");
+  loading.textContent = "作品を読み込んでいます……";
+  worksList.appendChild(loading);
+
+  const { data: sessionData, error: sessionError } =
+    await supabaseClient.auth.getSession();
+
+  if (sessionError || !sessionData.session) {
+    worksPanel.hidden = true;
+    return;
+  }
+
+  const { data: works, error } = await supabaseClient
+    .from("works")
+    .select("id, title, category, description, youtube_url, thumbnail_url, is_published, sort_order")
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: false });
+
+  worksList.replaceChildren();
+
+  if (error) {
+    const message = document.createElement("p");
+    message.textContent = "作品一覧を読み込めませんでした：" + error.message;
+    worksList.appendChild(message);
+    return;
+  }
+
+  if (!works || works.length === 0) {
+    const message = document.createElement("p");
+    message.textContent = "登録済みの作品はありません。";
+    worksList.appendChild(message);
+    return;
+  }
+
+  works.forEach((work) => {
+    const item = document.createElement("article");
+    item.style.borderTop = "1px solid #D8CCB9";
+    item.style.padding = "16px 0";
+
+    const title = document.createElement("h3");
+    title.textContent = work.title;
+    item.appendChild(title);
+
+    const category = document.createElement("p");
+    category.textContent = "ジャンル：" + work.category;
+    item.appendChild(category);
+
+    const status = document.createElement("p");
+    status.textContent = work.is_published ? "公開中" : "非公開";
+    item.appendChild(status);
+
+    const editButton = document.createElement("button");
+    editButton.type = "button";
+    editButton.textContent = "編集する";
+    editButton.addEventListener("click", () => {
+      showEditForm(work);
+    });
+    item.appendChild(editButton);
+
+    worksList.appendChild(item);
+  });
+}
     workForm.addEventListener("submit", async (event) => {
       event.preventDefault();
 
