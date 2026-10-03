@@ -630,14 +630,6 @@ function showEditForm(work) {
   parsedUrl.hostname === "youtu.be"
     ? parsedUrl.pathname.slice(1)
     : parsedUrl.searchParams.get("v");
-      
-const youtubeUrl = urlInput.value.trim();
-const parsedUrl = new URL(youtubeUrl);
-
-const videoId =
-  parsedUrl.hostname === "youtu.be"
-    ? parsedUrl.pathname.slice(1)
-    : parsedUrl.searchParams.get("v");
 
 const autoThumbnailUrl = videoId
   ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
