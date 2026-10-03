@@ -626,6 +626,11 @@ function showEditForm(work) {
       const youtubeUrl = urlInput.value.trim();
       const parsedUrl = new URL(youtubeUrl);
 
+      const videoId =
+  parsedUrl.hostname === "youtu.be"
+    ? parsedUrl.pathname.slice(1)
+    : parsedUrl.searchParams.get("v");
+
       if (
         !["youtube.com", "www.youtube.com", "youtu.be",
           "m.youtube.com"].includes(parsedUrl.hostname)
