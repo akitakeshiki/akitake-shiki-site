@@ -1,0 +1,396 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#F1E9D9">
+  <title>書庫の管理室 | 秋茸梓樹</title>
+
+  <style>
+    :root {
+      --cream: #F1E9D9;
+      --brown: #8B7055;
+      --green: #344A3C;
+      --text: #3D382F;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--text);
+      font-family: "Yu Mincho", "Hiragino Mincho ProN",
+        "Noto Serif JP", serif;
+      line-height: 1.8;
+    }
+
+    header {
+      padding: 22px;
+      border-bottom: 1px solid #D8CCB9;
+    }
+
+    header a {
+      color: var(--green);
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 36px 20px 64px;
+    }
+
+    .eyebrow {
+      color: var(--brown);
+      letter-spacing: 0.15em;
+      font-size: 0.8rem;
+    }
+
+    h1, h2 {
+      color: var(--green);
+    }
+
+    .panel {
+      background: #FAF6EE;
+      border: 1px solid #D8CCB9;
+      border-radius: 8px;
+      padding: 24px;
+      margin-top: 24px;
+    }
+
+    label {
+      display: block;
+      margin: 18px 0 6px;
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 11px;
+      border: 1px solid #BDAE98;
+      border-radius: 4px;
+      background: white;
+      color: var(--text);
+      font: inherit;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    input[type="checkbox"] {
+      width: auto;
+      margin-right: 8px;
+    }
+
+    .check-label {
+      display: flex;
+      align-items: center;
+      font-weight: normal;
+    }
+
+    button, .button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 11px 20px;
+      border: 0;
+      border-radius: 4px;
+      background: var(--green);
+      color: white;
+      font: inherit;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .secondary {
+      background: var(--brown);
+    }
+
+    .note {
+      font-size: 0.9rem;
+      color: #6A5B49;
+    }
+
+    #status {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    footer {
+      padding: 24px;
+      text-align: center;
+      color: var(--brown);
+      border-top: 1px solid #D8CCB9;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <a href="index.html">← 秋茸梓樹の書庫へ戻る</a>
+  </header>
+
+  <main>
+    <p class="eyebrow">THE LIBRARY · ADMINISTRATION</p>
+    <h1>書庫の管理室</h1>
+    <p>ここから、新しい朗読作品を本棚に登録できます。</p>
+
+    <section id="login-panel" class="panel">
+      <h2>管理者ログイン</h2>
+      <p>登録したGoogleアカウントでログインしてください。</p>
+      <button id="login-button" type="button">
+        Googleでログイン
+      </button>
+    </section>
+
+    <section id="admin-panel" class="panel" hidden>
+      <p>ログイン中：<strong id="user-email"></strong></p>
+      <button id="logout-button" class="secondary" type="button">
+        ログアウト
+      </button>
+
+      <h2>作品を登録する</h2>
+      <p class="note">
+        YouTubeの動画を公開してから登録してください。
+        公開チェックを外すと、作品は本棚に表示されません。
+      </p>
+
+      <form id="work-form">
+        <label for="title">作品名 *</label>
+        <input id="title" name="title" required maxlength="200">
+
+        <label for="category">ジャンル *</label>
+        <select id="category" name="category" required>
+          <option value="フリー台本朗読">フリー台本朗読</option>
+          <option value="青空文庫・文学">青空文庫・文学</option>
+          <option value="23時の声">23時の声</option>
+        </select>
+
+        <label for="youtube-url">YouTubeの動画URL *</label>
+        <input
+          id="youtube-url"
+          name="youtube_url"
+          type="url"
+          placeholder="https://youtu.be/..."
+          required
+        >
+
+        <label for="description">作品の紹介文</label>
+        <textarea
+          id="description"
+          name="description"
+          placeholder="作品の雰囲気や、聴いてほしいポイントなど"
+        ></textarea>
+
+        <label for="thumbnail-url">サムネイル画像URL</label>
+        <input
+          id="thumbnail-url"
+          name="thumbnail_url"
+          type="url"
+          placeholder="https://..."
+        >
+
+        <label for="sort-order">表示順（小さい数字ほど先に表示）</label>
+        <input
+          id="sort-order"
+          name="sort_order"
+          type="number"
+          value="0"
+          step="1"
+          required
+        >
+
+        <label class="check-label">
+          <input
+            id="is-published"
+            name="is_published"
+            type="checkbox"
+            checked
+          >
+          登録後すぐに本棚へ公開する
+        </label>
+
+        <button id="submit-button" type="submit">
+          作品を登録する
+        </button>
+      </form>
+    </section>
+
+    <p id="status" role="status" aria-live="polite"></p>
+  </main>
+
+  <footer>
+    声と言葉が出会う場所 — 秋茸梓樹
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+
+  <script>
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+    const loginPanel = document.getElementById("login-panel");
+    const adminPanel = document.getElementById("admin-panel");
+    const statusElement = document.getElementById("status");
+    const loginButton = document.getElementById("login-button");
+    const logoutButton = document.getElementById("logout-button");
+    const submitButton = document.getElementById("submit-button");
+    const workForm = document.getElementById("work-form");
+
+    function showStatus(message) {
+      statusElement.textContent = message;
+    }
+
+    function showUser(user) {
+      const loggedIn = Boolean(user);
+
+      loginPanel.hidden = loggedIn;
+      adminPanel.hidden = !loggedIn;
+
+      if (user) {
+        document.getElementById("user-email").textContent =
+          user.email || "メールアドレス未取得";
+      }
+    }
+
+    loginButton.addEventListener("click", async () => {
+      loginButton.disabled = true;
+      showStatus("Googleログインへ移動します……");
+
+      try {
+        const { error } = await supabaseClient.auth.signInWithOAuth({
+          provider: "google",
+          options: {
+            redirectTo: window.location.href.split("?")[0]
+          }
+        });
+
+        if (error) throw error;
+      } catch (error) {
+        showStatus("ログインできませんでした：" + error.message);
+        loginButton.disabled = false;
+      }
+    });
+
+    logoutButton.addEventListener("click", async () => {
+      const { error } = await supabaseClient.auth.signOut();
+
+      if (error) {
+        showStatus("ログアウトできませんでした：" + error.message);
+        return;
+      }
+
+      showUser(null);
+      showStatus("ログアウトしました。");
+    });
+
+    supabaseClient.auth.onAuthStateChange((_event, session) => {
+      showUser(session?.user || null);
+    });
+
+    async function initialize() {
+      const { data, error } = await supabaseClient.auth.getSession();
+
+      if (error) {
+        showStatus("ログイン状態を確認できませんでした。");
+        return;
+      }
+
+      showUser(data.session?.user || null);
+    }
+
+    workForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      submitButton.disabled = true;
+      showStatus("作品を登録しています……");
+
+      try {
+        const { data: sessionData, error: sessionError } =
+          await supabaseClient.auth.getSession();
+
+        if (sessionError || !sessionData.session) {
+          showUser(null);
+          throw new Error("ログインし直してください。");
+        }
+
+        const title = document.getElementById("title").value.trim();
+        const category = document.getElementById("category").value;
+        const youtubeUrl =
+          document.getElementById("youtube-url").value.trim();
+        const description =
+          document.getElementById("description").value.trim();
+        const thumbnailUrl =
+          document.getElementById("thumbnail-url").value.trim();
+        const sortOrder = Number(
+          document.getElementById("sort-order").value
+        );
+        const isPublished =
+          document.getElementById("is-published").checked;
+
+        const parsedUrl = new URL(youtubeUrl);
+
+        if (
+          !["youtube.com", "www.youtube.com", "youtu.be",
+            "m.youtube.com"].includes(parsedUrl.hostname)
+        ) {
+          throw new Error("YouTubeの動画URLを入力してください。");
+        }
+
+        if (!Number.isSafeInteger(sortOrder)) {
+          throw new Error("表示順には整数を入力してください。");
+        }
+
+        const { error } = await supabaseClient
+          .from("works")
+          .insert({
+            title,
+            category,
+            youtube_url: youtubeUrl,
+            description: description || null,
+            thumbnail_url: thumbnailUrl || null,
+            sort_order: sortOrder,
+            is_published: isPublished
+          });
+
+        if (error) throw error;
+
+        showStatus(
+          isPublished
+            ? "登録しました！公開サイトの本棚を確認してみてください。"
+            : "下書きとして登録しました。公開するにはSupabaseで設定を変更してください。"
+        );
+
+        workForm.reset();
+        document.getElementById("sort-order").value = "0";
+        document.getElementById("is-published").checked = true;
+      } catch (error) {
+        showStatus("登録できませんでした：" + error.message);
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+
+    initialize();
+  </script>
+</body>
+</html>
