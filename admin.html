@@ -630,7 +630,19 @@ function showEditForm(work) {
   parsedUrl.hostname === "youtu.be"
     ? parsedUrl.pathname.slice(1)
     : parsedUrl.searchParams.get("v");
+      
+const youtubeUrl = urlInput.value.trim();
+const parsedUrl = new URL(youtubeUrl);
 
+const videoId =
+  parsedUrl.hostname === "youtu.be"
+    ? parsedUrl.pathname.slice(1)
+    : parsedUrl.searchParams.get("v");
+
+const autoThumbnailUrl = videoId
+  ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+  : "";
+      
       if (
         !["youtube.com", "www.youtube.com", "youtu.be",
           "m.youtube.com"].includes(parsedUrl.hostname)
@@ -715,16 +727,16 @@ function showEditForm(work) {
         }
 
         const { error } = await supabaseClient
-          .from("works")
-          .insert({
-            title,
-            category,
-            youtube_url: youtubeUrl,
-            description: description || null,
-            thumbnail_url: thumbnailUrl || null,
-            sort_order: sortOrder,
-            is_published: isPublished
-          });
+  .from("works")
+  .insert({
+    title,
+    category,
+    youtube_url: youtubeUrl,
+    description: description || null,
+    thumbnail_url: autoThumbnailUrl || thumbnailUrl || null,
+    sort_order: sortOrder,
+    is_published: isPublished
+  });
 
         if (error) throw error;
 
