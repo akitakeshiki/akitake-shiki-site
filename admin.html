@@ -272,17 +272,23 @@
       statusElement.textContent = message;
     }
 
-    function showUser(user) {
-      const loggedIn = Boolean(user);
+    
+function showUser(user) {
+  const loggedIn = Boolean(user);
 
-      loginPanel.hidden = loggedIn;
-      adminPanel.hidden = !loggedIn;
+  loginPanel.hidden = loggedIn;
+  adminPanel.hidden = !loggedIn;
 
-      if (user) {
-        document.getElementById("user-email").textContent =
-          user.email || "メールアドレス未取得";
-      }
-    }
+  const worksPanel = document.getElementById("works-panel");
+  worksPanel.hidden = !loggedIn;
+
+  if (user) {
+    document.getElementById("user-email").textContent =
+      user.email || "メールアドレス未取得";
+
+    loadWorks();
+  }
+}
 
     loginButton.addEventListener("click", async () => {
       loginButton.disabled = true;
