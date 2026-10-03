@@ -405,6 +405,177 @@ async function loadWorks() {
     worksList.appendChild(item);
   });
 }
+    
+function showEditForm(work) {
+  const worksList = document.getElementById("works-list");
+
+  // すでに開いている編集フォームがあれば閉じる
+  const oldForm = document.getElementById("edit-form");
+  if (oldForm) oldForm.remove();
+
+  const form = document.createElement("form");
+  form.id = "edit-form";
+  form.className = "panel";
+
+  const heading = document.createElement("h3");
+  heading.textContent = "作品を編集する";
+  form.appendChild(heading);
+
+  function addField(labelText, name, value, type = "text") {
+    const label = document.createElement("label");
+    label.textContent = labelText;
+
+    const input = document.createElement("input");
+    input.name = name;
+    input.type = type;
+    input.value = value ?? "";
+    input.required = name === "title" ||
+                     name === "youtube_url";
+
+    label.htmlFor = "edit-" + name;
+    input.id = "edit-" + name;
+
+    label.appendChild(input);
+    form.appendChild(label);
+
+    return input;
+  }
+
+  const titleInput = addField("作品名", "title", work.title);
+
+  const categoryLabel = document.createElement("label");
+  categoryLabel.textContent = "ジャンル";
+
+  const categorySelect = document.createElement("select");
+  categorySelect.name = "category";
+
+  [
+    "フリー台本朗読",
+    "青空文庫・文学",
+    "23時の声"
+  ].forEach((category) => {
+    const option = document.createElement("option");
+    option.value = category;
+    option.textContent = category;
+    option.selected = category === work.category;
+    categorySelect.appendChild(option);
+  });
+
+  categoryLabel.appendChild(categorySelect);
+  form.appendChild(categoryLabel);
+
+  const urlInput = addField(
+    "YouTubeの動画URL",
+    "youtube_url",
+    work.youtube_url,
+    "url"
+  );
+
+  const descriptionLabel = document.createElement("label");
+  descriptionLabel.textContent = "作品の紹介文";
+
+  const descriptionInput = document.createElement("textarea");
+  descriptionInput.name = "description";
+  descriptionInput.value = work.description || "";
+  descriptionLabel.appendChild(descriptionInput);
+  form.appendChild(descriptionLabel);
+
+  const thumbnailInput = addField(
+    "サムネイル画像URL",
+    "thumbnail_url",
+    work.thumbnail_url || "",
+    "url"
+  );
+
+  const orderInput = addField(
+    "表示順",
+    "sort_order",
+    work.sort_order,
+    "number"
+  );
+  orderInput.step = "1";
+
+  const publishedLabel = document.createElement("label");
+  publishedLabel.className = "check-label";
+
+  const publishedInput = document.createElement("input");
+  publishedInput.type = "checkbox";
+  publishedInput.name = "is_published";
+  publishedInput.checked = work.is_published;
+
+  publishedLabel.appendChild(publishedInput);
+  publishedLabel.append(" 公開する");
+  form.appendChild(publishedLabel);
+
+  const saveButton = document.createElement("button");
+  saveButton.type = "submit";
+  saveButton.textContent = "変更を保存する";
+  form.appendChild(saveButton);
+
+  const cancelButton = document.createElement("button");
+  cancelButton.type = "button";
+  cancelButton.className = "secondary";
+  cancelButton.textContent = "キャンセル";
+  cancelButton.addEventListener("click", () => form.remove());
+  form.appendChild(cancelButton);
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    saveButton.disabled = true;
+    showStatus("変更を保存しています……");
+
+    try {
+      const { data: sessionData, error: sessionError } =
+        await supabaseClient.auth.getSession();
+
+      if (sessionError || !sessionData.session) {
+        throw new Error("ログインし直してください。");
+      }
+
+      const youtubeUrl = urlInput.value.trim();
+      const parsedUrl = new URL(youtubeUrl);
+
+      if (
+        !["youtube.com", "www.youtube.com", "youtu.be",
+          "m.youtube.com"].includes(parsedUrl.hostname)
+      ) {
+        throw new Error("YouTubeの動画URLを入力してください。");
+      }
+
+      const sortOrder = Number(orderInput.value);
+
+      if (!Number.isSafeInteger(sortOrder)) {
+        throw new Error("表示順には整数を入力してください。");
+      }
+
+      const { error } = await supabaseClient
+        .from("works")
+        .update({
+          title: titleInput.value.trim(),
+          category: categorySelect.value,
+          youtube_url: youtubeUrl,
+          description: descriptionInput.value.trim() || null,
+          thumbnail_url: thumbnailInput.value.trim() || null,
+          sort_order: sortOrder,
+          is_published: publishedInput.checked
+        })
+        .eq("id", work.id);
+
+      if (error) throw error;
+
+      showStatus("変更を保存しました！");
+      form.remove();
+      await loadWorks();
+    } catch (error) {
+      showStatus("保存できませんでした：" + error.message);
+    } finally {
+      saveButton.disabled = false;
+    }
+  });
+
+  worksList.prepend(form);
+  form.scrollIntoView({ behavior: "smooth", block: "start" });
+}
     workForm.addEventListener("submit", async (event) => {
       event.preventDefault();
 
