@@ -689,8 +689,6 @@ const autoThumbnailUrl = videoId
           document.getElementById("youtube-url").value.trim();
         const description =
           document.getElementById("description").value.trim();
-        const thumbnailUrl =
-          document.getElementById("thumbnail-url").value.trim();
         const sortOrder = Number(
           document.getElementById("sort-order").value
         );
@@ -726,7 +724,7 @@ const autoThumbnailUrl = videoId
     category,
     youtube_url: youtubeUrl,
     description: description || null,
-    thumbnail_url: autoThumbnailUrl || thumbnailUrl || null,
+    thumbnail_url: autoThumbnailUrl || null,
     sort_order: sortOrder,
     is_published: isPublished
   });
