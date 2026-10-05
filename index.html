@@ -166,19 +166,23 @@
 }
 
     .button {
-      display: inline-block;
-      margin-top: 28px;
-      padding: 12px 28px;
-      background: var(--green);
-      color: #fffdf7;
-      font-size: 13px;
-      letter-spacing: .08em;
-      transition: background .2s;
-    }
+  display: inline-block;
+  margin-top: 28px;
+  padding: 11px 26px;
+  border: 1px solid var(--green);
+  background: transparent;
+  color: var(--green);
+  font-size: 12px;
+  letter-spacing: .1em;
+  transition:
+    background .2s ease,
+    color .2s ease;
+}
 
     .button:hover {
-      background: var(--green-light);
-    }
+  background: var(--green);
+  color: #fffdf7;
+}
 
     section {
       padding: 76px 0;
