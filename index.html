@@ -419,11 +419,24 @@ bottom: -55px;
 }
 
     .social-links a {
-      padding: 8px 16px;
-      border: 1px solid var(--line);
-      font-family: sans-serif;
-      font-size: 12px;
-    }
+  padding: 9px 18px;
+  border: 1px solid var(--line);
+  color: var(--green);
+  font-family: sans-serif;
+  font-size: 12px;
+  letter-spacing: .04em;
+  text-decoration: none;
+  transition:
+    border-color .2s ease,
+    color .2s ease,
+    background .2s ease;
+}
+
+    .social-links a:hover {
+  border-color: var(--brown);
+  background: #f7f1e6;
+  color: var(--brown);
+}
 
     footer {
       padding: 35px 0;
