@@ -191,12 +191,29 @@
           required
         >
 
-        <label for="description">作品の紹介文</label>
-        <textarea
-          id="description"
-          name="description"
-          placeholder="作品の雰囲気や、聴いてほしいポイントなど"
-        ></textarea>
+       <label for="description">作品の紹介文</label>
+<textarea
+  id="description"
+  name="description"
+  placeholder="作品の雰囲気や、聴いてほしいポイントなど"
+></textarea>
+
+<label for="script-author">台本の作者名</label>
+<input
+  id="script-author"
+  name="script_author"
+  type="text"
+  maxlength="200"
+  placeholder="作者名"
+>
+
+<label for="script-url">台本URL</label>
+<input
+  id="script-url"
+  name="script_url"
+  type="url"
+  placeholder="https://..."
+>
 
         <label for="sort-order">表示順（小さい数字ほど先に表示）</label>
         <input
@@ -691,6 +708,11 @@ const autoThumbnailUrl = videoId
           document.getElementById("youtube-url").value.trim();
         const description =
           document.getElementById("description").value.trim();
+        const scriptAuthor =
+  document.getElementById("script-author").value.trim();
+
+const scriptUrl =
+  document.getElementById("script-url").value.trim();
         const sortOrder = Number(
           document.getElementById("sort-order").value
         );
@@ -722,14 +744,16 @@ const autoThumbnailUrl = videoId
         const { error } = await supabaseClient
   .from("works")
   .insert({
-    title,
-    category,
-    youtube_url: youtubeUrl,
-    description: description || null,
-    thumbnail_url: autoThumbnailUrl || null,
-    sort_order: sortOrder,
-    is_published: isPublished
-  });
+  title,
+  category,
+  youtube_url: youtubeUrl,
+  description: description || null,
+  script_author: scriptAuthor || null,
+  script_url: scriptUrl || null,
+  thumbnail_url: autoThumbnailUrl || null,
+  sort_order: sortOrder,
+  is_published: isPublished
+});
 
         if (error) throw error;
 
