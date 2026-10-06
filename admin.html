@@ -580,6 +580,19 @@ function showEditForm(work) {
   descriptionLabel.appendChild(descriptionInput);
   form.appendChild(descriptionLabel);
 
+  const scriptAuthorInput = addField(
+  "台本の作者名",
+  "script_author",
+  work.script_author || ""
+);
+
+const scriptUrlInput = addField(
+  "台本URL",
+  "script_url",
+  work.script_url || "",
+  "url"
+);
+
   const thumbnailInput = addField(
     "サムネイル画像URL",
     "thumbnail_url",
@@ -662,11 +675,13 @@ const autoThumbnailUrl = videoId
       const { error } = await supabaseClient
         .from("works")
         .update({
-          title: titleInput.value.trim(),
-          category: categorySelect.value,
-          youtube_url: youtubeUrl,
-          description: descriptionInput.value.trim() || null,
-          thumbnail_url: thumbnailInput.value.trim() || null,
+  title: titleInput.value.trim(),
+  category: categorySelect.value,
+  youtube_url: youtubeUrl,
+  description: descriptionInput.value.trim() || null,
+  script_author: scriptAuthorInput.value.trim() || null,
+  script_url: scriptUrlInput.value.trim() || null,
+  thumbnail_url: thumbnailInput.value.trim() || null,
           sort_order: sortOrder,
           is_published: publishedInput.checked
         })
