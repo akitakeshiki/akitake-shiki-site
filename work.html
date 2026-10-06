@@ -174,7 +174,7 @@
 
       const { data: work, error } = await supabaseClient
         .from("works")
-        .select("id, title, category, description, thumbnail_url, youtube_url")
+        .select("id, title, category, description, thumbnail_url, youtube_url, script_author, script_url")
         .eq("id", workId)
         .eq("is_published", true)
         .maybeSingle();
@@ -209,6 +209,32 @@
       description.textContent =
         work.description || "この作品の紹介文は、現在準備中です。";
       content.appendChild(description);
+
+      if (work.script_author || work.script_url) {
+  const scriptInfo = document.createElement("div");
+  scriptInfo.className = "script-info";
+
+  const heading = document.createElement("h2");
+  heading.textContent = "台本について";
+  scriptInfo.appendChild(heading);
+
+  if (work.script_author) {
+    const author = document.createElement("p");
+    author.textContent = "作者：" + work.script_author;
+    scriptInfo.appendChild(author);
+  }
+
+  if (work.script_url) {
+    const scriptLink = document.createElement("a");
+    scriptLink.href = work.script_url;
+    scriptLink.target = "_blank";
+    scriptLink.rel = "noopener noreferrer";
+    scriptLink.textContent = "台本を読む →";
+    scriptInfo.appendChild(scriptLink);
+  }
+
+  content.appendChild(scriptInfo);
+}
 
       const actions = document.createElement("div");
       actions.className = "actions";
