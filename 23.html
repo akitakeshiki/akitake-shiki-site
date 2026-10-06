@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#F1E9D9">
+
+  <title>23時の声 | 秋茸梓樹の書庫</title>
+
+  <style>
+    :root {
+      --cream: #F1E9D9;
+      --brown: #8B7055;
+      --green: #344A3C;
+      --text: #3D382F;
+      --muted: #756B5F;
+      --line: #D8CCB9;
+      --white: #fffdf8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--text);
+      font-family:
+        "Yu Mincho", "Hiragino Mincho ProN",
+        "Noto Serif JP", serif;
+      line-height: 1.9;
+    }
+
+    a {
+      color: var(--green);
+    }
+
+    header {
+      padding: 24px 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .site-name {
+      color: var(--green);
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: bold;
+      letter-spacing: 0.05em;
+    }
+
+    .back-link {
+      color: var(--green);
+      font-size: 0.85rem;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      color: var(--brown);
+    }
+
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 70px 24px 90px;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 40px 0 70px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 12px;
+      color: var(--brown);
+      font-family: sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.24em;
+    }
+
+    .time {
+      margin: 0 0 12px;
+      color: var(--green);
+      font-family: Georgia, serif;
+      font-size: clamp(4rem, 13vw, 7rem);
+      font-weight: normal;
+      line-height: 1;
+      letter-spacing: 0.04em;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--green);
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      font-weight: 500;
+      letter-spacing: 0.12em;
+    }
+
+    .lead {
+      max-width: 600px;
+      margin: 28px auto 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 2.1;
+    }
+
+    .message {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 42px 36px;
+      background: var(--white);
+      border: 1px solid var(--line);
+    }
+
+    .message h2 {
+      margin: 0 0 20px;
+      color: var(--green);
+      font-size: 1.35rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+    }
+
+    .message p {
+      margin: 0 0 16px;
+      font-size: 0.9rem;
+      line-height: 2.1;
+    }
+
+    .message p:last-child {
+      margin-bottom: 0;
+    }
+
+    .places {
+      margin-top: 56px;
+    }
+
+    .places-heading {
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .places-heading h2 {
+      margin: 0 0 8px;
+      color: var(--green);
+      font-size: 1.4rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+    }
+
+    .places-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .place-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .place {
+      padding: 30px;
+      background: rgba(255, 253, 248, 0.65);
+      border: 1px solid var(--line);
+    }
+
+    .place-label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--brown);
+      font-family: sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+    }
+
+    .place h3 {
+      margin: 0 0 12px;
+      color: var(--green);
+      font-size: 1.15rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+    }
+
+    .place p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.9;
+    }
+
+    .button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      border: 1px solid var(--green);
+      color: var(--green);
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+      transition:
+        background 0.2s ease,
+        color 0.2s ease;
+    }
+
+    .button:hover {
+      background: var(--green);
+      color: var(--white);
+    }
+
+    .closing {
+      margin: 70px auto 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      line-height: 2;
+    }
+
+    footer {
+      padding: 30px 24px;
+      border-top: 1px solid var(--line);
+      color: var(--brown);
+      font-size: 0.8rem;
+      text-align: center;
+    }
+
+    @media (max-width: 700px) {
+      header {
+        padding: 20px;
+      }
+
+      .header-inner {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      main {
+        padding: 50px 20px 70px;
+      }
+
+      .hero {
+        padding: 25px 0 55px;
+      }
+
+      .message {
+        padding: 30px 24px;
+      }
+
+      .place-list {
+        grid-template-columns: 1fr;
+      }
+
+      .place {
+        padding: 26px 22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a class="site-name" href="index.html">
+        秋茸梓樹の書庫
+      </a>
+
+      <a class="back-link" href="index.html">
+        ← 書庫へ戻る
+      </a>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="hero">
+      <span class="eyebrow">23:00 VOICE</span>
+
+      <p class="time">23:00</p>
+
+      <h1>23時の声</h1>
+
+      <p class="lead">
+        一日の終わり、眠る前のほんの少しの時間に。<br>
+        短い声を、そっと届けています。
+      </p>
+    </section>
+
+    <section class="message">
+      <h2>23時の声について</h2>
+
+      <p>
+        「23時の声」は、毎日23時に投稿している短い音声シリーズです。
+      </p>
+
+      <p>
+        一日の終わりに、少しだけ誰かの声を聴きたいとき。
+        眠る前に、ひとことだけ言葉がほしいとき。
+      </p>
+
+      <p>
+        そんな何気ない時間に、ふと思い出してもらえるような声を目指しています。
+      </p>
+    </section>
+
+    <section class="places">
+
+      <div class="places-heading">
+        <h2>声を聴く場所</h2>
+        <p>毎日の声と、週ごとのまとめをそれぞれの場所で。</p>
+      </div>
+
+      <div class="place-list">
+
+        <article class="place">
+          <span class="place-label">EVERY DAY</span>
+
+          <h3>X</h3>
+
+          <p>
+            毎日23時に、その日の「23時の声」を投稿しています。
+          </p>
+
+          <a
+            class="button"
+            href="https://x.com/shiki_voice"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Xで毎日の声を聴く →
+          </a>
+        </article>
+
+        <article class="place">
+          <span class="place-label">WEEKLY</span>
+
+          <h3>YouTube</h3>
+
+          <p>
+            その週の「23時の声」をまとめて、YouTubeに投稿しています。
+          </p>
+
+          <a
+            class="button"
+            href="https://youtube.com/@shiki_voice"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            YouTubeで聴く →
+          </a>
+        </article>
+
+      </div>
+
+    </section>
+
+    <p class="closing">
+      今日も一日、おつかれさまでした。<br>
+      また、23時に。
+    </p>
+
+  </main>
+
+  <footer>
+    声と言葉が出会う場所 — 秋茸梓樹
+  </footer>
+
+</body>
+</html>
