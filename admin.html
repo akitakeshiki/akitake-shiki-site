@@ -728,9 +728,19 @@ const autoThumbnailUrl = videoId
 
 const scriptUrl =
   document.getElementById("script-url").value.trim();
-        const sortOrder = Number(
-          document.getElementById("sort-order").value
-        );
+       const { data: maxSortData, error: maxSortError } =
+  await supabaseClient
+    .from("works")
+    .select("sort_order")
+    .order("sort_order", { ascending: false })
+    .limit(1);
+
+if (maxSortError) throw maxSortError;
+
+const sortOrder =
+  maxSortData && maxSortData.length > 0
+    ? maxSortData[0].sort_order + 1
+    : 1;
         const isPublished =
           document.getElementById("is-published").checked;
 
