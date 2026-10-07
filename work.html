@@ -263,6 +263,34 @@
 
   content.appendChild(scriptInfo);
 }
+        content.appendChild(scriptInfo);
+}
+
+if (work.author_name || work.aozora_url) {
+  const aozoraInfo = document.createElement("div");
+  aozoraInfo.className = "script-info";
+
+  const heading = document.createElement("h2");
+  heading.textContent = "青空文庫";
+  aozoraInfo.appendChild(heading);
+
+  if (work.author_name) {
+    const author = document.createElement("p");
+    author.textContent = "作者：" + work.author_name;
+    aozoraInfo.appendChild(author);
+  }
+
+  if (work.aozora_url) {
+    const aozoraLink = document.createElement("a");
+    aozoraLink.href = work.aozora_url;
+    aozoraLink.target = "_blank";
+    aozoraLink.rel = "noopener noreferrer";
+    aozoraLink.textContent = "青空文庫の図書カードを見る →";
+    aozoraInfo.appendChild(aozoraLink);
+  }
+
+  content.appendChild(aozoraInfo);
+}
 
       const actions = document.createElement("div");
       actions.className = "actions";
