@@ -202,7 +202,7 @@
 
       const { data: work, error } = await supabaseClient
         .from("works")
-        .select("id, title, category, description, thumbnail_url, youtube_url, script_author, script_url")
+        .select("id, title, category, description, thumbnail_url, youtube_url, script_author, script_url, author_name, aozora_url")
         .eq("id", workId)
         .eq("is_published", true)
         .maybeSingle();
