@@ -373,7 +373,7 @@ async function loadWorks() {
 
   const { data: works, error } = await supabaseClient
     .from("works")
-    .select("id, title, category, description, youtube_url, script_author, script_url, thumbnail_url, is_published, sort_order")
+    .select("id, title, category, description, youtube_url, script_author, script_url, author_name, aozora_url, thumbnail_url, is_published, sort_order")
     .order("sort_order", { ascending: true })
     .order("created_at", { ascending: false });
 
@@ -600,6 +600,19 @@ const scriptUrlInput = addField(
   "url"
 );
 
+  const authorNameInput = addField(
+  "作者名",
+  "author_name",
+  work.author_name || ""
+);
+
+const aozoraUrlInput = addField(
+  "青空文庫 図書カードURL",
+  "aozora_url",
+  work.aozora_url || "",
+  "url"
+);
+
   const thumbnailInput = addField(
     "サムネイル画像URL",
     "thumbnail_url",
@@ -688,6 +701,8 @@ const autoThumbnailUrl = videoId
   description: descriptionInput.value.trim() || null,
   script_author: scriptAuthorInput.value.trim() || null,
   script_url: scriptUrlInput.value.trim() || null,
+          author_name: authorNameInput.value.trim() || null,
+aozora_url: aozoraUrlInput.value.trim() || null,
   thumbnail_url: thumbnailInput.value.trim() || null,
           sort_order: sortOrder,
           is_published: publishedInput.checked
