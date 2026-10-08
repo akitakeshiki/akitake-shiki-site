@@ -215,22 +215,24 @@
   placeholder="https://..."
 >
 
-        <label for="author-name">作者名</label>
-<input
-  id="author-name"
-  name="author_name"
-  type="text"
-  maxlength="200"
-  placeholder="作者名"
->
+<div id="aozora-fields">
+  <label for="author-name">作者名</label>
+  <input
+    id="author-name"
+    name="author_name"
+    type="text"
+    maxlength="200"
+    placeholder="作者名"
+  >
 
-<label for="aozora-url">青空文庫 図書カードURL</label>
-<input
-  id="aozora-url"
-  name="aozora_url"
-  type="url"
-  placeholder="https://www.aozora.gr.jp/..."
->
+  <label for="aozora-url">青空文庫 図書カードURL</label>
+  <input
+    id="aozora-url"
+    name="aozora_url"
+    type="url"
+    placeholder="https://www.aozora.gr.jp/..."
+  >
+</div>
 
         <label class="check-label">
           <input
@@ -820,10 +822,26 @@ aozora_url: aozoraUrl || null,
         document.getElementById("is-published").checked = true;
       } catch (error) {
         showStatus("登録できませんでした：" + error.message);
-      } finally {
+            } finally {
         submitButton.disabled = false;
       }
     });
+
+    const categorySelect = document.getElementById("category");
+    const aozoraFields = document.getElementById("aozora-fields");
+
+    function updateAozoraFields() {
+      if (categorySelect.value === "フリー台本朗読") {
+        aozoraFields.hidden = true;
+      } else {
+        aozoraFields.hidden = false;
+      }
+    }
+
+    categorySelect.addEventListener("change", updateAozoraFields);
+    updateAozoraFields();
+
+    initialize();
 
     initialize();
   </script>
