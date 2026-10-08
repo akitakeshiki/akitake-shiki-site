@@ -198,22 +198,24 @@
   placeholder="作品の雰囲気や、聴いてほしいポイントなど"
 ></textarea>
 
-<label for="script-author">台本の作者名</label>
-<input
-  id="script-author"
-  name="script_author"
-  type="text"
-  maxlength="200"
-  placeholder="作者名"
->
+<div id="script-fields">
+  <label for="script-author">台本の作者名</label>
+  <input
+    id="script-author"
+    name="script_author"
+    type="text"
+    maxlength="200"
+    placeholder="作者名"
+  >
 
-<label for="script-url">台本URL</label>
-<input
-  id="script-url"
-  name="script_url"
-  type="url"
-  placeholder="https://..."
->
+  <label for="script-url">台本URL</label>
+  <input
+    id="script-url"
+    name="script_url"
+    type="url"
+    placeholder="https://..."
+  >
+</div>
 
 <div id="aozora-fields">
   <label for="author-name">作者名</label>
@@ -830,18 +832,17 @@ aozora_url: aozoraUrl || null,
     const categorySelect = document.getElementById("category");
     const aozoraFields = document.getElementById("aozora-fields");
 
-    function updateAozoraFields() {
-      if (categorySelect.value === "フリー台本朗読") {
-        aozoraFields.hidden = true;
-      } else {
-        aozoraFields.hidden = false;
-      }
-    }
+   function updateAozoraFields() {
+  const hideAozora =
+    categorySelect.value === "フリー台本朗読" ||
+    categorySelect.value === "青空文庫・文学";
+
+  aozoraFields.hidden = hideAozora;
+  document.getElementById("script-fields").hidden = hideAozora;
+}
 
     categorySelect.addEventListener("change", updateAozoraFields);
     updateAozoraFields();
-
-    initialize();
 
     initialize();
   </script>
