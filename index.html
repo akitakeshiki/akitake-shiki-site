@@ -238,6 +238,94 @@ bottom: -55px;
   border-color: #b9a890;
 }
 
+    
+/* カテゴリ別の本棚 */
+.shelf-sections {
+  display: grid;
+  gap: 40px;
+}
+
+.category-shelf {
+  min-width: 0;
+}
+
+.category-shelf h2 {
+  margin: 0 0 18px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+  color: var(--green, #344a3c);
+  font-size: 1.35rem;
+  line-height: 1.5;
+}
+
+/* 各棚の作品カード */
+.category-shelf .shelf {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+/* サムネイル */
+.work-thumbnail {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 3px;
+  margin-bottom: 12px;
+}
+
+/* もっと見る・閉じる */
+.more-button {
+  display: block;
+  margin: 20px auto 0;
+  padding: 10px 24px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #fffdf8;
+  color: var(--green, #344a3c);
+  font: inherit;
+  cursor: pointer;
+}
+
+.more-button:hover {
+  background: #f1e9d9;
+}
+
+.more-button:focus-visible {
+  outline: 2px solid var(--green, #344a3c);
+  outline-offset: 3px;
+}
+
+.more-button[hidden] {
+  display: none;
+}
+
+/* スマートフォン */
+@media (max-width: 700px) {
+  .category-shelf .shelf {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .shelf-sections {
+    gap: 30px;
+  }
+
+  .category-shelf h2 {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .category-shelf .shelf {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+
     .book-cover {
       min-height: 165px;
       padding: 22px;
@@ -678,11 +766,27 @@ bottom: -55px;
         </div>
 
 
-<div class="filters" role="group" aria-label="作品ジャンルで絞り込む">
-  <button class="filter-button active" type="button" data-filter="all" aria-pressed="true">すべて</button>
-  <button class="filter-button" type="button" data-filter="フリー台本朗読" aria-pressed="false">フリー台本朗読</button>
-  <button class="filter-button" type="button" data-filter="青空文庫・文学" aria-pressed="false">青空文庫・文学</button>
+
+<div class="shelf-sections" id="shelf-sections">
+  <section class="category-shelf" data-category="フリー台本朗読">
+    <h2>フリー台本朗読</h2>
+    <div class="shelf" id="shelf-free-script"></div>
+    <button class="more-button" type="button" hidden>もっと見る</button>
+  </section>
+
+  <section class="category-shelf" data-category="青空文庫・文学">
+    <h2>青空文庫・文学</h2>
+    <div class="shelf" id="shelf-aozora"></div>
+    <button class="more-button" type="button" hidden>もっと見る</button>
+  </section>
+
+  <section class="category-shelf" data-category="23時の声">
+    <h2>23時の声</h2>
+    <div class="shelf" id="shelf-23"></div>
+    <button class="more-button" type="button" hidden>もっと見る</button>
+  </section>
 </div>
+
         
 <div class="shelf" id="works-shelf">
   <article class="work-card" data-category="フリー台本朗読">
@@ -808,36 +912,6 @@ bottom: -55px;
     <p>秋茸梓樹｜声と言葉の書庫</p>
     <small>© 秋茸梓樹</small>
   </footer>
-
-  
-<script>
-  const filterButtons = document.querySelectorAll(".filter-button");
-
-  filterButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const selected = button.dataset.filter;
-
-      filterButtons.forEach((item) => {
-        const active = item === button;
-        item.classList.toggle("active", active);
-        item.setAttribute("aria-pressed", String(active));
-      });
-
-      // ボタンを押した時点で、本棚の作品カードを取得する
-      const workCards = document.querySelectorAll(
-        "#works-shelf .work-card"
-      );
-
-      workCards.forEach((card) => {
-        const show =
-          selected === "all" ||
-          card.dataset.category === selected;
-
-        card.hidden = !show;
-      });
-    });
-  });
-</script>
   
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
@@ -847,7 +921,8 @@ bottom: -55px;
     SUPABASE_PUBLISHABLE_KEY
   );
 
-  async function loadPublishedWorks() {
+
+async function loadPublishedWorks() {
   const { data, error } = await supabaseClient
     .from("works")
     .select("*")
@@ -860,62 +935,104 @@ bottom: -55px;
     return;
   }
 
-  const shelf = document.getElementById("works-shelf");
-  if (!shelf) return;
+  const shelfMap = {
+    "フリー台本朗読": "shelf-free-script",
+    "青空文庫・文学": "shelf-aozora",
+    "23時の声": "shelf-23"
+  };
 
-  // 既存のカードを消して、Supabaseの作品データで描画する
-  shelf.replaceChildren();
+  const shelves = document.querySelectorAll(".category-shelf");
 
-  data.forEach((work) => {
-    const article = document.createElement("article");
-    article.className = "work-card";
-    article.dataset.category = work.category;
+  shelves.forEach((section) => {
+    const shelf = section.querySelector(".shelf");
+    const moreButton = section.querySelector(".more-button");
 
+    shelf.replaceChildren();
 
-if (work.thumbnail_url) {
-  const img = document.createElement("img");
-  img.className = "work-thumbnail";
-  img.src = work.thumbnail_url;
-  img.alt = `${work.title}の詳細を見る`;
-  img.loading = "lazy";
+    const category = section.dataset.category;
+    const works = data.filter((work) => work.category === category);
+    const initialCount = 3;
 
-  const thumbnailLink = document.createElement("a");
-  thumbnailLink.href = `work.html?id=${encodeURIComponent(work.id)}`;
-  thumbnailLink.setAttribute(
-    "aria-label",
-    `${work.title}の作品詳細ページを開く`
-  );
+    works.forEach((work, index) => {
+      const article = document.createElement("article");
+      article.className = "work-card";
+      article.dataset.category = work.category;
 
-  thumbnailLink.appendChild(img);
-  article.appendChild(thumbnailLink);
-}
+      if (index >= initialCount) {
+        article.hidden = true;
+        article.dataset.extraWork = "true";
+      }
 
-    const title = document.createElement("h3");
-title.textContent = work.title;
+      if (work.thumbnail_url) {
+        const img = document.createElement("img");
+        img.className = "work-thumbnail";
+        img.src = work.thumbnail_url;
+        img.alt = `${work.title}の動画サムネイル`;
+        img.loading = "lazy";
 
-const detailLink = document.createElement("a");
-detailLink.href = `work.html?id=${encodeURIComponent(work.id)}`;
-detailLink.className = "work-title-link";
-detailLink.appendChild(title);
+        const thumbnailLink = document.createElement("a");
+        thumbnailLink.href =
+          `work.html?id=${encodeURIComponent(work.id)}`;
+        thumbnailLink.setAttribute(
+          "aria-label",
+          `${work.title}の作品詳細ページを開く`
+        );
+        thumbnailLink.appendChild(img);
+        article.appendChild(thumbnailLink);
+      }
 
-article.appendChild(detailLink);
+      const title = document.createElement("h3");
+      title.textContent = work.title;
 
-    const description = document.createElement("p");
-    description.textContent = work.description || work.category;
-    article.appendChild(description);
+      const detailLink = document.createElement("a");
+      detailLink.href =
+        `work.html?id=${encodeURIComponent(work.id)}`;
+      detailLink.className = "work-title-link";
+      detailLink.appendChild(title);
+      article.appendChild(detailLink);
 
-    const link = document.createElement("a");
-    link.href = work.youtube_url;
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
-    link.textContent = "作品を聴く";
-    article.appendChild(link);
+      const description = document.createElement("p");
+      description.textContent = work.description || work.category;
+      article.appendChild(description);
 
-    shelf.appendChild(article);
+      const listenLink = document.createElement("a");
+      listenLink.href = work.youtube_url;
+      listenLink.target = "_blank";
+      listenLink.rel = "noopener noreferrer";
+      listenLink.textContent = "作品を聴く";
+      article.appendChild(listenLink);
+
+      shelf.appendChild(article);
+    });
+
+    if (works.length > initialCount) {
+      moreButton.hidden = false;
+      moreButton.textContent = "もっと見る";
+
+      moreButton.onclick = () => {
+        const isExpanded = moreButton.dataset.expanded === "true";
+
+        shelf.querySelectorAll("[data-extra-work]").forEach((card) => {
+          card.hidden = isExpanded;
+        });
+
+        moreButton.dataset.expanded = String(!isExpanded);
+        moreButton.textContent = isExpanded ? "もっと見る" : "閉じる";
+      };
+    } else {
+      moreButton.hidden = true;
+    }
+
+    if (works.length === 0) {
+      section.hidden = true;
+    } else {
+      section.hidden = false;
+    }
   });
 
-  console.log(`Supabaseから${data.length}作品を表示しました`);
+  console.log(`Supabaseから${data.length}作品を読み込みました`);
 }
+
 
 loadPublishedWorks();
 </script>
