@@ -957,23 +957,35 @@ async function loadPublishedWorks() {
       shelf.appendChild(article);
     });
 
-    if (works.length > initialCount) {
-      moreButton.hidden = false;
-      moreButton.textContent = "もっと見る";
+    
+const workCards = Array.from(shelf.querySelectorAll(".work-card"));
+let visibleCount = initialCount;
 
-      moreButton.onclick = () => {
-        const isExpanded = moreButton.dataset.expanded === "true";
+workCards.forEach((card, index) => {
+  card.hidden = index >= visibleCount;
+});
 
-        shelf.querySelectorAll("[data-extra-work]").forEach((card) => {
-          card.hidden = isExpanded;
-        });
+function updateMoreButton() {
+  const hasMore = visibleCount < workCards.length;
+  moreButton.hidden = !hasMore;
+  moreButton.textContent = "もっと見る";
+}
 
-        moreButton.dataset.expanded = String(!isExpanded);
-        moreButton.textContent = isExpanded ? "もっと見る" : "閉じる";
-      };
-    } else {
-      moreButton.hidden = true;
-    }
+moreButton.onclick = () => {
+  visibleCount = Math.min(
+    visibleCount + batchSize,
+    workCards.length
+  );
+
+  workCards.forEach((card, index) => {
+    card.hidden = index >= visibleCount;
+  });
+
+  updateMoreButton();
+};
+
+updateMoreButton();
+
 
     if (works.length === 0) {
       section.hidden = true;
