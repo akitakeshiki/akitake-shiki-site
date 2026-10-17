@@ -63,6 +63,44 @@
       margin-top: 24px;
     }
 
+    
+/* カテゴリごとの作品一覧 */
+.admin-category {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid #D8CCB9;
+}
+
+.admin-category h3 {
+  margin-bottom: 8px;
+  color: var(--green, #344A3C);
+}
+
+.admin-category-count {
+  color: #756957;
+  font-size: 0.9rem;
+}
+
+.admin-work-item {
+  padding: 16px 0;
+  border-bottom: 1px solid #D8CCB9;
+}
+
+.admin-work-item h4 {
+  margin: 0 0 8px;
+  overflow-wrap: anywhere;
+}
+
+.admin-work-item p {
+  margin: 6px 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-more-button {
+  margin-top: 16px;
+}
+
+
     label {
       display: block;
       margin: 18px 0 6px;
@@ -395,6 +433,63 @@ async function loadWorks() {
     worksList.appendChild(message);
     return;
   }
+  
+const categoryOrder = [
+  "フリー台本朗読",
+  "青空文庫・文学",
+  "23時の声"
+];
+
+const categories = [
+  ...categoryOrder.filter((category) =>
+    works.some((work) => work.category === category)
+  ),
+  ...new Set(
+    works
+      .map((work) => work.category)
+      .filter((category) => !categoryOrder.includes(category))
+  )
+];
+
+const categoryContainers = new Map();
+
+categories.forEach((categoryName) => {
+  const section = document.createElement("section");
+  section.className = "admin-category";
+
+  const heading = document.createElement("h3");
+  heading.textContent = categoryName;
+  section.appendChild(heading);
+
+  const categoryWorks = works.filter(
+    (work) => work.category === categoryName
+  );
+
+  const count = document.createElement("p");
+  count.className = "admin-category-count";
+  count.textContent = `登録作品：${categoryWorks.length}件`;
+  section.appendChild(count);
+
+  const list = document.createElement("div");
+  section.appendChild(list);
+
+  const moreButton = document.createElement("button");
+  moreButton.type = "button";
+  moreButton.className = "admin-more-button";
+  moreButton.textContent = "もっと見る";
+  moreButton.hidden = true;
+  section.appendChild(moreButton);
+
+  worksList.appendChild(section);
+
+  categoryContainers.set(categoryName, {
+    list,
+    moreButton,
+    visibleCount: 30,
+    cards: []
+  });
+});
+
 
   works.forEach((work) => {
     const item = document.createElement("article");
@@ -512,8 +607,44 @@ publishButton.addEventListener("click", async () => {
 
 item.appendChild(publishButton);
 
-worksList.appendChild(item);
+const categoryContainer = categoryContainers.get(work.category);
+
+if (categoryContainer) {
+  categoryContainer.cards.push(item);
+}
+
   });
+  
+categoryContainers.forEach(({ list, moreButton, cards }) => {
+  let visibleCount = Math.min(30, cards.length);
+
+  cards.slice(0, visibleCount).forEach((card) => {
+    list.appendChild(card);
+  });
+
+  function updateMoreButton() {
+    moreButton.hidden = visibleCount >= cards.length;
+  }
+
+  moreButton.addEventListener("click", () => {
+    const nextVisibleCount = Math.min(
+      visibleCount + 30,
+      cards.length
+    );
+
+    cards
+      .slice(visibleCount, nextVisibleCount)
+      .forEach((card) => {
+        list.appendChild(card);
+      });
+
+    visibleCount = nextVisibleCount;
+    updateMoreButton();
+  });
+
+  updateMoreButton();
+});
+
 }
     
 function showEditForm(work) {
