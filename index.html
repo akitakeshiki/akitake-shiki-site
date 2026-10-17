@@ -965,10 +965,13 @@ workCards.forEach((card, index) => {
   card.hidden = index >= visibleCount;
 });
 
+
 function updateMoreButton() {
   const hasMore = visibleCount < workCards.length;
+
   moreButton.hidden = !hasMore;
   moreButton.textContent = "もっと見る";
+  moreButton.setAttribute("aria-label", "さらに30作品を表示");
 }
 
 moreButton.onclick = () => {
