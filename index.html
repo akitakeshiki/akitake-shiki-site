@@ -699,7 +699,9 @@ bottom: -55px;
     
 /* 作品を聴くリンク */
 
-.work-card a:not(:has(img)) {
+
+/* 作品を聴くリンクだけをボタン風にする */
+.work-card a:not(.work-title-link) {
   display: inline-block;
   margin-top: 12px;
   padding: 9px 14px;
@@ -714,10 +716,11 @@ bottom: -55px;
     color 0.2s ease;
 }
 
-.work-card a:not(:has(img)):hover {
+.work-card a:not(.work-title-link):hover {
   background: transparent;
   color: var(--green);
 }
+
     
 .profile-box {
   display: grid;
