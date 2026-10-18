@@ -701,12 +701,15 @@ bottom: -55px;
 
 
 /* 作品を聴くリンクだけをボタン風にする */
-.work-card a:not(.work-title-link) {
+ 
+.work-card a:not(.work-title-link):not(:has(img)) {
   display: inline-block;
   margin-top: 12px;
   padding: 9px 14px;
   border: 1px solid var(--green);
   border-radius: 4px;
+  background: var(--green);
+  color: #fffdf8;
   font-size: 0.9rem;
   text-decoration: none;
   transition:
@@ -714,7 +717,8 @@ bottom: -55px;
     color 0.2s ease;
 }
 
-.work-card a:not(.work-title-link):hover {
+
+.work-card a:not(.work-title-link):not(:has(img)):hover {
   background: transparent;
   color: var(--green);
 }
