@@ -219,7 +219,7 @@ bottom: -55px;
   gap: 28px;
 }
 
-.work-card {
+. {
   min-width: 0;
   border: 1px solid var(--line);
   background: #fffdf8;
@@ -232,14 +232,14 @@ bottom: -55px;
     border-color 0.2s ease;
 }
 
-.work-card:hover {
+.:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(52, 74, 60, 0.08);
   border-color: #b9a890;
 }
     
 /* 作品カードのサムネイル */
-.work-card img {
+. img {
   display: block;
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -649,7 +649,7 @@ bottom: -55px;
   outline-offset: 3px;
 }
 
-.work-card[hidden] {
+.[hidden] {
   display: none;
 }
 
@@ -664,7 +664,7 @@ bottom: -55px;
   box-shadow: 0 2px 8px rgba(52, 74, 60, 0.08);
 }
   
-.work-card h3 {
+. h3 {
   margin: 0 0 10px;
   color: var(--green);
   font-size: 18px;
@@ -673,14 +673,14 @@ bottom: -55px;
   overflow-wrap: anywhere;
 }
   
-.work-card p {
+. p {
   margin: 0 0 16px;
   color: var(--brown);
   font-size: 13px;
   line-height: 1.8;
 }
     
-.work-card .text-link {
+. .text-link {
   display: inline-block;
   padding: 9px 16px;
   border: 1px solid var(--green);
@@ -692,13 +692,14 @@ bottom: -55px;
   transition: background 0.2s ease, color 0.2s ease;
 }
 
-.work-card a:focus-visible {
+. a:focus-visible {
   outline: 2px solid var(--brown);
   outline-offset: 3px;
 }
     
 /* 作品を聴くリンク */
-.work-card a {
+
+.work-card a:not(:has(img)) {
   display: inline-block;
   margin-top: 12px;
   padding: 9px 14px;
@@ -713,7 +714,7 @@ bottom: -55px;
     color 0.2s ease;
 }
 
-.work-card a:hover {
+.work-card a:not(:has(img)):hover {
   background: transparent;
   color: var(--green);
 }
