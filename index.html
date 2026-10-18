@@ -697,6 +697,27 @@ bottom: -55px;
   outline-offset: 3px;
 }
     
+/* 作品を聴くリンク */
+.work-card a {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 9px 14px;
+  border: 1px solid var(--green);
+  border-radius: 4px;
+  background: var(--green);
+  color: #fffdf8;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.work-card a:hover {
+  background: transparent;
+  color: var(--green);
+}
+    
 .profile-box {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 220px;
