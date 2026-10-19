@@ -810,7 +810,11 @@ bottom: -55px;
           <p>気になる言葉から、自由に作品を選んでください。</p>
         </div>
 
-
+<section class="today-recommendations">
+  <h2>今日のおすすめ</h2>
+  <p>書庫から、今日の3作品をお届けします。</p>
+  <div class="shelf" id="today-recommendations-shelf"></div>
+</section>
 
 <div class="shelf-sections" id="shelf-sections">
   <section class="category-shelf" data-category="フリー台本朗読">
@@ -822,12 +826,6 @@ bottom: -55px;
   <section class="category-shelf" data-category="青空文庫・文学">
     <h2>青空文庫・文学</h2>
     <div class="shelf" id="shelf-aozora"></div>
-    <button class="more-button" type="button" hidden>もっと見る</button>
-  </section>
-
-  <section class="category-shelf" data-category="23時の声">
-    <h2>23時の声</h2>
-    <div class="shelf" id="shelf-23"></div>
     <button class="more-button" type="button" hidden>もっと見る</button>
   </section>
 </div>
@@ -933,10 +931,86 @@ async function loadPublishedWorks() {
 
   const shelfMap = {
     "フリー台本朗読": "shelf-free-script",
-    "青空文庫・文学": "shelf-aozora",
-    "23時の声": "shelf-23"
+    "青空文庫・文学": "shelf-aozora"
   };
+  // 今日の日付を使って、おすすめ作品を毎日固定する
+  const todayShelf = document.getElementById(
+    "today-recommendations-shelf"
+  );
 
+  if (todayShelf) {
+    todayShelf.replaceChildren();
+
+    const publishedWorks = [...data];
+    const today = new Date();
+    const dateKey =
+      `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+
+    let seed = 0;
+    for (const char of dateKey) {
+      seed = (seed * 31 + char.charCodeAt(0)) >>> 0;
+    }
+
+    // 日付を使って、毎日同じ順番になるように並べ替える
+    publishedWorks.sort((a, b) => {
+      const score = (work) => {
+        const text = `${work.id}-${dateKey}`;
+        let value = seed;
+
+        for (const char of text) {
+          value = (value * 31 + char.charCodeAt(0)) >>> 0;
+        }
+
+        return value;
+      };
+
+      return score(a) - score(b);
+    });
+
+    const recommendedWorks = publishedWorks.slice(0, 3);
+
+    recommendedWorks.forEach((work) => {
+      const article = document.createElement("article");
+      article.className = "work-card";
+
+      if (work.thumbnail_url) {
+        const img = document.createElement("img");
+        img.className = "work-thumbnail";
+        img.src = work.thumbnail_url;
+        img.alt = `${work.title}の動画サムネイル`;
+        img.loading = "lazy";
+
+        const thumbnailLink = document.createElement("a");
+        thumbnailLink.href =
+          `work.html?id=${encodeURIComponent(work.id)}`;
+        thumbnailLink.appendChild(img);
+        article.appendChild(thumbnailLink);
+      }
+
+      const title = document.createElement("h3");
+      title.textContent = work.title;
+
+      const detailLink = document.createElement("a");
+      detailLink.href =
+        `work.html?id=${encodeURIComponent(work.id)}`;
+      detailLink.className = "work-title-link";
+      detailLink.appendChild(title);
+      article.appendChild(detailLink);
+
+      const description = document.createElement("p");
+      description.textContent = work.description || work.category;
+      article.appendChild(description);
+
+      const listenLink = document.createElement("a");
+      listenLink.href = work.youtube_url;
+      listenLink.target = "_blank";
+      listenLink.rel = "noopener noreferrer";
+      listenLink.textContent = "作品を聴く";
+      article.appendChild(listenLink);
+
+      todayShelf.appendChild(article);
+    });
+  }
   const shelves = document.querySelectorAll(".category-shelf");
 
   shelves.forEach((section) => {
