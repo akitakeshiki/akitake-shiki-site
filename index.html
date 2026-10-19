@@ -943,7 +943,7 @@ async function loadPublishedWorks() {
 
     const category = section.dataset.category;
     const works = data.filter((work) => work.category === category);
-    const initialCount = 30;
+    const initialCount = 3;
     const batchSize = 30;
 
     works.forEach((work, index) => {
