@@ -1078,8 +1078,6 @@ async function loadPublishedWorks() {
 
       selectedTag = button.dataset.tag;
       renderShelves();
-      selectedTag = null;
-      renderShelves();
 
       tagSearchList
         .querySelectorAll(".tag-button")
@@ -1095,6 +1093,7 @@ async function loadPublishedWorks() {
 
     clearTagSearchButton.addEventListener("click", () => {
       selectedTag = null;
+      renderShelves();
 
       tagSearchList
         .querySelectorAll(".tag-button")
@@ -1106,117 +1105,114 @@ async function loadPublishedWorks() {
     });
   }
   
-  const shelves = document.querySelectorAll(".category-shelf");
+ 
+  function renderShelves() {
+    const shelves = document.querySelectorAll(".category-shelf");
 
-  shelves.forEach((section) => {
-    const shelf = section.querySelector(".shelf");
-    const moreButton = section.querySelector(".more-button");
+    shelves.forEach((section) => {
+      const shelf = section.querySelector(".shelf");
+      const moreButton = section.querySelector(".more-button");
 
-    shelf.replaceChildren();
+      shelf.replaceChildren();
 
-    const category = section.dataset.category;
-        const works = data.filter((work) => {
-      const matchesCategory = work.category === category;
-      const matchesTag =
-        selectedTag === null ||
-        (Array.isArray(work.tags) && work.tags.includes(selectedTag));
+      const category = section.dataset.category;
+      const works = data.filter((work) => {
+        const matchesCategory = work.category === category;
+        const matchesTag =
+          selectedTag === null ||
+          (Array.isArray(work.tags) && work.tags.includes(selectedTag));
 
-      return matchesCategory && matchesTag;
-    });
-    const initialCount = 3;
-    const batchSize = 30;
+        return matchesCategory && matchesTag;
+      });
 
-    works.forEach((work, index) => {
-      const article = document.createElement("article");
-      article.className = "work-card";
-      article.dataset.category = work.category;
+      const initialCount = 3;
+      const batchSize = 30;
 
-      if (index >= initialCount) {
-        article.hidden = true;
-        article.dataset.extraWork = "true";
-      }
+      works.forEach((work, index) => {
+        const article = document.createElement("article");
+        article.className = "work-card";
+        article.dataset.category = work.category;
 
-      if (work.thumbnail_url) {
-        const img = document.createElement("img");
-        img.className = "work-thumbnail";
-        img.src = work.thumbnail_url;
-        img.alt = `${work.title}の動画サムネイル`;
-        img.loading = "lazy";
+        if (work.thumbnail_url) {
+          const img = document.createElement("img");
+          img.className = "work-thumbnail";
+          img.src = work.thumbnail_url;
+          img.alt = `${work.title}の動画サムネイル`;
+          img.loading = "lazy";
 
-        const thumbnailLink = document.createElement("a");
-        thumbnailLink.href =
+          const thumbnailLink = document.createElement("a");
+          thumbnailLink.href =
+            `work.html?id=${encodeURIComponent(work.id)}`;
+          thumbnailLink.setAttribute(
+            "aria-label",
+            `${work.title}の作品詳細ページを開く`
+          );
+          thumbnailLink.appendChild(img);
+          article.appendChild(thumbnailLink);
+        }
+
+        const title = document.createElement("h3");
+        title.textContent = work.title;
+
+        const detailLink = document.createElement("a");
+        detailLink.href =
           `work.html?id=${encodeURIComponent(work.id)}`;
-        thumbnailLink.setAttribute(
-          "aria-label",
-          `${work.title}の作品詳細ページを開く`
-        );
-        thumbnailLink.appendChild(img);
-        article.appendChild(thumbnailLink);
+        detailLink.className = "work-title-link";
+        detailLink.appendChild(title);
+        article.appendChild(detailLink);
+
+        const description = document.createElement("p");
+        description.textContent = work.description || work.category;
+        article.appendChild(description);
+
+        const listenLink = document.createElement("a");
+        listenLink.href = work.youtube_url;
+        listenLink.target = "_blank";
+        listenLink.rel = "noopener noreferrer";
+        listenLink.textContent = "作品を聴く";
+        article.appendChild(listenLink);
+
+        shelf.appendChild(article);
+      });
+
+      const workCards = Array.from(
+        shelf.querySelectorAll(".work-card")
+      );
+      let visibleCount = Math.min(initialCount, workCards.length);
+
+      function updateVisibleCards() {
+        workCards.forEach((card, index) => {
+          card.hidden = index >= visibleCount;
+        });
       }
 
-      const title = document.createElement("h3");
-      title.textContent = work.title;
+      function updateMoreButton() {
+        moreButton.hidden = visibleCount >= workCards.length;
+        moreButton.textContent = "もっと見る";
+        moreButton.setAttribute(
+          "aria-label",
+          "さらに30作品を表示"
+        );
+      }
 
-      const detailLink = document.createElement("a");
-      detailLink.href =
-        `work.html?id=${encodeURIComponent(work.id)}`;
-      detailLink.className = "work-title-link";
-      detailLink.appendChild(title);
-      article.appendChild(detailLink);
+      moreButton.onclick = () => {
+        visibleCount = Math.min(
+          visibleCount + batchSize,
+          workCards.length
+        );
 
-      const description = document.createElement("p");
-      description.textContent = work.description || work.category;
-      article.appendChild(description);
+        updateVisibleCards();
+        updateMoreButton();
+      };
 
-      const listenLink = document.createElement("a");
-      listenLink.href = work.youtube_url;
-      listenLink.target = "_blank";
-      listenLink.rel = "noopener noreferrer";
-      listenLink.textContent = "作品を聴く";
-      article.appendChild(listenLink);
+      updateVisibleCards();
+      updateMoreButton();
 
-      shelf.appendChild(article);
+      section.hidden = works.length === 0;
     });
+  }
 
-    
-const workCards = Array.from(shelf.querySelectorAll(".work-card"));
-let visibleCount = initialCount;
-
-workCards.forEach((card, index) => {
-  card.hidden = index >= visibleCount;
-});
-
-
-function updateMoreButton() {
-  const hasMore = visibleCount < workCards.length;
-
-  moreButton.hidden = !hasMore;
-  moreButton.textContent = "もっと見る";
-  moreButton.setAttribute("aria-label", "さらに30作品を表示");
-}
-
-moreButton.onclick = () => {
-  visibleCount = Math.min(
-    visibleCount + batchSize,
-    workCards.length
-  );
-
-  workCards.forEach((card, index) => {
-    card.hidden = index >= visibleCount;
-  });
-
-  updateMoreButton();
-};
-
-updateMoreButton();
-
-
-    if (works.length === 0) {
-      section.hidden = true;
-    } else {
-      section.hidden = false;
-    }
-  });
+  renderShelves();
 
   console.log(`Supabaseから${data.length}作品を読み込みました`);
 }
