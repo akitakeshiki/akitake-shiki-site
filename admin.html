@@ -234,6 +234,18 @@
   name="description"
   placeholder="作品の雰囲気や、聴いてほしいポイントなど"
 ></textarea>
+     
+<label for="tags">作品タグ</label>
+<input
+  id="tags"
+  name="tags"
+  type="text"
+  placeholder="優しい, 切ない, 少年"
+>
+<p class="help-text">
+  タグは「,」で区切って入力してください。
+</p>
+   
 
 <div id="script-fields">
   <label for="script-author">台本の作者名</label>
@@ -414,7 +426,7 @@ async function loadWorks() {
 
   const { data: works, error } = await supabaseClient
     .from("works")
-    .select("id, title, category, description, youtube_url, script_author, script_url, author_name, aozora_url, thumbnail_url, is_published, sort_order")
+.select("id, title, category, description, tags, youtube_url, script_author, script_url, author_name, aozora_url, thumbnail_url, is_published, sort_order")
     .order("sort_order", { ascending: true })
     .order("created_at", { ascending: false });
 
@@ -720,6 +732,11 @@ function showEditForm(work) {
   descriptionInput.value = work.description || "";
   descriptionLabel.appendChild(descriptionInput);
   form.appendChild(descriptionLabel);
+    const tagsInput = addField(
+    "作品タグ（カンマ区切り）",
+    "tags",
+    Array.isArray(work.tags) ? work.tags.join(", ") : ""
+  );
 
   const scriptAuthorInput = addField(
   "台本の作者名",
@@ -832,8 +849,12 @@ const autoThumbnailUrl = videoId
   title: titleInput.value.trim(),
   category: categorySelect.value,
   youtube_url: youtubeUrl,
-  description: descriptionInput.value.trim() || null,
-  script_author: scriptAuthorInput.value.trim() || null,
+description: descriptionInput.value.trim() || null,
+tags: tagsInput.value
+  .split(",")
+  .map((tag) => tag.trim())
+  .filter((tag) => tag.length > 0),
+script_author: scriptAuthorInput.value.trim() || null,
   script_url: scriptUrlInput.value.trim() || null,
           author_name: authorNameInput.value.trim() || null,
 aozora_url: aozoraUrlInput.value.trim() || null,
@@ -879,6 +900,12 @@ aozora_url: aozoraUrlInput.value.trim() || null,
           document.getElementById("youtube-url").value.trim();
         const description =
           document.getElementById("description").value.trim();
+        const tags = document
+  .getElementById("tags")
+  .value
+  .split(",")
+  .map((tag) => tag.trim())
+  .filter((tag) => tag.length > 0);
         const scriptAuthor =
   document.getElementById("script-author").value.trim();
         const authorName =
@@ -935,7 +962,8 @@ const autoThumbnailUrl = videoId
   category,
   youtube_url: youtubeUrl,
   description: description || null,
-  script_author: scriptAuthor || null,
+tags: tags,
+script_author: scriptAuthor || null,
   script_url: scriptUrl || null,
     author_name: authorName || null,
 aozora_url: aozoraUrl || null,
