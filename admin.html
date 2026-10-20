@@ -424,10 +424,9 @@ async function loadWorks() {
     return;
   }
 
-  const { data: works, error } = await supabaseClient
+    const { data: works, error } = await supabaseClient
     .from("works")
-.select("id, title, category, description, tags, youtube_url, script_author, script_url, author_name, aozora_url, thumbnail_url, is_published, sort_order")
-    .order("sort_order", { ascending: true })
+    .select("id, title, category, description, tags, youtube_url, script_author, script_url, author_name, aozora_url, is_published, sort_order, created_at")
     .order("created_at", { ascending: false });
 
   worksList.replaceChildren();
