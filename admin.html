@@ -525,11 +525,21 @@ categories.forEach((categoryName) => {
 });
 
 
- works
-  .filter((work) =>
-    work.title.toLocaleLowerCase().includes(searchTerm)
-  )
-  .forEach((work) => {
+const filteredWorks = works.filter((work) =>
+  work.title.toLocaleLowerCase().includes(searchTerm)
+);
+
+if (filteredWorks.length === 0) {
+  const message = document.createElement("p");
+  message.textContent = searchTerm
+    ? "検索に一致する作品はありません。"
+    : "登録済みの作品はありません。";
+
+  worksList.appendChild(message);
+  return;
+}
+
+filteredWorks.forEach((work) => {
     const item = document.createElement("article");
     item.style.borderTop = "1px solid #D8CCB9";
     item.style.padding = "16px 0";
