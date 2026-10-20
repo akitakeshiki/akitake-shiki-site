@@ -838,6 +838,16 @@ bottom: -55px;
 <p>気になる作品を見つけたら、下の本棚からも物語を探してみてください。</p>
   <div class="shelf" id="today-recommendations-shelf"></div>
 </section>
+ 
+<section class="tag-search">
+  <h2>タグから探す</h2>
+  <p>気になる言葉を選んで、作品を探してみてください。</p>
+  <div id="tag-search-list" class="tag-search-list"></div>
+  <button id="clear-tag-search" type="button" hidden>
+    すべての作品を表示
+  </button>
+</section>
+
 
 <div class="shelf-sections" id="shelf-sections">
   <section class="category-shelf" data-category="フリー台本朗読">
@@ -938,7 +948,7 @@ bottom: -55px;
     SUPABASE_PUBLISHABLE_KEY
   );
 
-
+let selectedTag = null;
 async function loadPublishedWorks() {
   const { data, error } = await supabaseClient
     .from("works")
@@ -1034,6 +1044,68 @@ async function loadPublishedWorks() {
       todayShelf.appendChild(article);
     });
   }
+    // 公開作品に登録されているタグを集める
+  const tagSearchList = document.getElementById("tag-search-list");
+  const clearTagSearchButton =
+    document.getElementById("clear-tag-search");
+
+  if (tagSearchList) {
+    tagSearchList.replaceChildren();
+
+    const allTags = [
+      ...new Set(
+        data.flatMap((work) =>
+          Array.isArray(work.tags) ? work.tags : []
+        )
+      )
+    ].sort((a, b) => a.localeCompare(b, "ja"));
+
+    allTags.forEach((tag) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "tag-button";
+      button.textContent = tag;
+      button.dataset.tag = tag;
+
+      tagSearchList.appendChild(button);
+    });
+  }
+
+  if (tagSearchList && clearTagSearchButton) {
+    tagSearchList.addEventListener("click", (event) => {
+      const button = event.target.closest(".tag-button");
+      if (!button) return;
+
+      selectedTag = button.dataset.tag;
+      renderShelves();
+      selectedTag = null;
+      renderShelves();
+
+      tagSearchList
+        .querySelectorAll(".tag-button")
+        .forEach((tagButton) => {
+          tagButton.setAttribute(
+            "aria-pressed",
+            String(tagButton.dataset.tag === selectedTag)
+          );
+        });
+
+      clearTagSearchButton.hidden = false;
+    });
+
+    clearTagSearchButton.addEventListener("click", () => {
+      selectedTag = null;
+
+      tagSearchList
+        .querySelectorAll(".tag-button")
+        .forEach((tagButton) => {
+          tagButton.setAttribute("aria-pressed", "false");
+        });
+
+      clearTagSearchButton.hidden = true;
+    });
+  }
+  
   const shelves = document.querySelectorAll(".category-shelf");
 
   shelves.forEach((section) => {
@@ -1043,7 +1115,14 @@ async function loadPublishedWorks() {
     shelf.replaceChildren();
 
     const category = section.dataset.category;
-    const works = data.filter((work) => work.category === category);
+        const works = data.filter((work) => {
+      const matchesCategory = work.category === category;
+      const matchesTag =
+        selectedTag === null ||
+        (Array.isArray(work.tags) && work.tags.includes(selectedTag));
+
+      return matchesCategory && matchesTag;
+    });
     const initialCount = 3;
     const batchSize = 30;
 
