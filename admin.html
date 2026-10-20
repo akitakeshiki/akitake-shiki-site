@@ -308,9 +308,20 @@
   <p class="note">
     登録済み作品の確認や、紹介文などの編集ができます。
   </p>
-  <div id="works-list">
-    <p>作品を読み込んでいます……</p>
-  </div>
+  
+<div>
+  <label for="work-search">作品名で検索</label>
+  <input
+    id="work-search"
+    type="search"
+    placeholder="作品名の一部を入力…"
+  >
+</div>
+
+<div id="works-list">
+  <p>作品を読み込んでいます……</p>
+</div>
+
 </section>
 
 <p id="status" role="status" aria-live="polite"></p>
@@ -430,6 +441,12 @@ async function loadWorks() {
     .order("created_at", { ascending: false });
 
   worksList.replaceChildren();
+  
+  const searchInput = document.getElementById("work-search");
+  const searchTerm = searchInput
+    ? searchInput.value.trim().toLocaleLowerCase()
+    : "";
+
 
   if (error) {
     const message = document.createElement("p");
@@ -472,9 +489,15 @@ categories.forEach((categoryName) => {
   heading.textContent = categoryName;
   section.appendChild(heading);
 
-  const categoryWorks = works.filter(
-    (work) => work.category === categoryName
-  );
+
+  const categoryWorks = works.filter((work) => {
+    const matchesCategory = work.category === categoryName;
+    const matchesSearch = work.title
+      .toLocaleLowerCase()
+      .includes(searchTerm);
+
+    return matchesCategory && matchesSearch;
+  });
 
   const count = document.createElement("p");
   count.className = "admin-category-count";
@@ -502,7 +525,11 @@ categories.forEach((categoryName) => {
 });
 
 
-  works.forEach((work) => {
+ works
+  .filter((work) =>
+    work.title.toLocaleLowerCase().includes(searchTerm)
+  )
+  .forEach((work) => {
     const item = document.createElement("article");
     item.style.borderTop = "1px solid #D8CCB9";
     item.style.padding = "16px 0";
@@ -1009,6 +1036,16 @@ aozora_url: aozoraUrl || null,
 
     categorySelect.addEventListener("change", updateAozoraFields);
     updateAozoraFields();
+
+    const workSearchInput = document.getElementById("work-search");
+
+if (workSearchInput) {
+  workSearchInput.addEventListener("input", () => {
+    loadWorks();
+  });
+}
+
+initialize();
 
     initialize();
   </script>
