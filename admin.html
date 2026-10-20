@@ -894,7 +894,7 @@ script_author: scriptAuthorInput.value.trim() || null,
   script_url: scriptUrlInput.value.trim() || null,
           author_name: authorNameInput.value.trim() || null,
 aozora_url: aozoraUrlInput.value.trim() || null,
-  thumbnail_url: thumbnailInput.value.trim() || null,
+  thumbnail_url: thumbnailInput.value.trim() || autoThumbnailUrl || null,
           sort_order: sortOrder,
           is_published: publishedInput.checked
         })
