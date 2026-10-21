@@ -1129,9 +1129,18 @@ async function loadPublishedWorks() {
       detailLink.appendChild(title);
       article.appendChild(detailLink);
 
-      const description = document.createElement("p");
-      description.textContent = work.description || work.category;
-      article.appendChild(description);
+
+const description = document.createElement("p");
+const fullDescription = work.description || work.category;
+const maxLength = 60;
+
+description.textContent =
+  fullDescription.length > maxLength
+    ? fullDescription.slice(0, maxLength) + "…"
+    : fullDescription;
+
+article.appendChild(description);
+
 
       const listenLink = document.createElement("a");
       listenLink.href = work.youtube_url;
@@ -1260,9 +1269,18 @@ async function loadPublishedWorks() {
         detailLink.appendChild(title);
         article.appendChild(detailLink);
 
-        const description = document.createElement("p");
-        description.textContent = work.description || work.category;
-        article.appendChild(description);
+
+const description = document.createElement("p");
+const fullDescription = work.description || work.category;
+const maxLength = 60;
+
+description.textContent =
+  fullDescription.length > maxLength
+    ? fullDescription.slice(0, maxLength) + "…"
+    : fullDescription;
+
+article.appendChild(description);
+
 
         const listenLink = document.createElement("a");
         listenLink.href = work.youtube_url;
